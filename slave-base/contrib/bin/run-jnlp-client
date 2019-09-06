@@ -110,12 +110,12 @@ if [[ $(echo "$@" | awk '{print NF}') -gt 1 ]]; then
 
 # NOTE: The following default options are deprecated with java 11. We disable them for all, including java-1.8
 
-#  if [[ -z "${JAVA_TOOL_OPTIONS}" ]]; then
-#    # these options will automatically be picked up by any JVM process but can
-#    # be overridden on that process' command line.
+  if [[ -z "${JAVA_TOOL_OPTIONS}" ]]; then
+    # these options will automatically be picked up by any JVM process but can
+    # be overridden on that process' command line.
 #    JAVA_TOOL_OPTIONS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Dsun.zip.disableMemoryMapping=true"
-#    export JAVA_TOOL_OPTIONS
-#  fi
+    export JAVA_TOOL_OPTIONS
+  fi
 
   # assume k8s/docker memory limit was set if memory.limit_in_bytes < 1TiB
   if [[ "${CONTAINER_MEMORY_IN_BYTES}" -lt $((2**40)) ]]; then
