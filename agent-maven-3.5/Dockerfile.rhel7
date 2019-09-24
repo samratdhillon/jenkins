@@ -1,4 +1,5 @@
-FROM quay.io/openshift/origin-jenkins-agent-base:v4.0
+FROM registry.access.redhat.com/openshift3/jenkins-slave-base-rhel7:v3.11
+
 MAINTAINER Akram Ben Aissi <abenaiss@redhat.com>
 
 # Labels consumed by Red Hat build service
@@ -16,13 +17,15 @@ ENV MAVEN_VERSION=3.5 \
     PROMPT_COMMAND=". /usr/local/bin/scl_enable"
 
 # Install Maven
-RUN INSTALL_PKGS="java-1.8.0-openjdk-devel java-11-openjdk-devel rh-maven35*" && \
-    yum install -y $INSTALL_PKGS && \
-    rpm -V  java-1.8.0-openjdk-devel java-11-openjdk-devel rh-maven35 && \
+RUN yum-config-manager --enable rhel-server-rhscl-7-rpms && \
+    yum-config-manager --enable rhel-server-rhscl-8-rpms && \
+    yum-config-manager --disable epel >/dev/null || : && \
+    INSTALL_PKGS="java-11-openjdk-devel java-1.8.0-openjdk-devel rh-maven35*" && \
+    x86_EXTRA_RPMS=$(if [ "$(uname -m)" == "x86_64" ]; then echo -n java-11-openjdk-devel.i686 ; fi) && \
+    yum install -y --setopt=protected_multilib=false $INSTALL_PKGS $x86_EXTRA_RPMS && \
+    rpm -V  java-11-openjdk-devel java-1.8.0-openjdk-devel rh-maven35 $x86_EXTRA_RPMS && \
     yum clean all -y && \
     mkdir -p $HOME/.m2
-
-RUN alternatives --set java $(alternatives --display java | grep java-11 | awk '/family.*x86_64/ { print $1; }')
 
 # When bash is started non-interactively, to run a shell script, for example it
 # looks for this variable and source the content of this file. This will enable
