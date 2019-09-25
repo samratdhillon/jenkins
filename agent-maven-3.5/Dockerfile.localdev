@@ -1,4 +1,4 @@
-FROM openshift/jenkins-slave-base-centos7:v3.11
+FROM devtools.cpggpc.ca:8151/devcoe/jenkins-slave-base-centos7-JDK11:latest
 
 MAINTAINER Akram Ben Aissi <abenaiss@redhat.com>
 
